@@ -1,0 +1,296 @@
+#include <iostream>
+#include <queue>
+#include <time.h>
+#include <map>
+
+using namespace std;
+
+const int MAXN = 6;
+int n;
+int rotations;
+struct state {
+	int f[MAXN][MAXN];
+	bool possible;
+	bool operator<(const state &that) const {
+		for (int i = 0; i < n; ++i)
+			for (int j = 0; j < n; ++j)
+				if (f[i][j] < that.f[i][j])
+					return true;
+				else if (f[i][j] > that.f[i][j])
+					return false;
+		return false;
+	}
+};
+int enter_from_top[17] = { 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0 };
+int enter_from_right[17] = { 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1 };
+int enter_from_down[17] = { 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0 };
+int enter_from_left[17] = { 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0 };
+
+map<state, int> used;
+map<state, int> d;
+map<state, state> p;
+
+int di[4] = { 0, 1, 0, -1 };
+int dj[4] = { 1, 0, -1, 0 };
+int i_start, j_start, i_end, j_end;
+int u[MAXN][MAXN];
+
+int sgn(int e) {
+	if (e > 0)
+		return 1;
+	return -1;
+}
+
+int abv(int e) {
+	e = abs(e);
+	if (e % 10 == 0) e /= 10;
+	return e;
+}
+
+bool inside(int i, int j) {
+	return
+		0 <= i && i < n && 0 <= j && j < n;
+
+}
+
+void print(state s) {
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			cout << s.f[i][j] << '\t';
+		}
+		cout << endl;
+	}
+}
+
+bool solved(state s) {
+	int cur_i = i_start, cur_j = j_start, from, to;
+	for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) u[i][j] = 0;
+
+	u[cur_i][cur_j] = 1;
+	while (true) {
+		from = abv(s.f[cur_i][cur_j]);
+		//Right
+		to = abv(s.f[cur_i][cur_j + 1]);
+		if (inside(cur_i, cur_j + 1) && !u[cur_i][cur_j + 1] && enter_from_right[from] && enter_from_left[to]) {
+			cur_j++;
+			u[cur_i][cur_j] = true;
+			continue;
+		}
+		//Down
+		to = abv(s.f[cur_i + 1][cur_j]);
+		if (inside(cur_i + 1, cur_j) && !u[cur_i + 1][cur_j] && enter_from_down[from] && enter_from_top[to]) {
+			cur_i++;
+			u[cur_i][cur_j] = true;
+			continue;
+		}
+		//Left
+		to = abv(s.f[cur_i][cur_j - 1]);
+		if (inside(cur_i, cur_j - 1) && !u[cur_i][cur_j - 1] && enter_from_left[from] && enter_from_right[to]) {
+			cur_j--;
+			u[cur_i][cur_j] = true;
+			continue;
+		}
+		//Up
+		to = abv(s.f[cur_i - 1][cur_j]);
+		if (inside(cur_i - 1, cur_j) && !u[cur_i - 1][cur_j] && enter_from_top[from] && enter_from_down[to]) {
+			cur_i--;
+			u[cur_i][cur_j] = true;
+			continue;
+		}
+		if (cur_i == i_end && cur_j == j_end)
+			return true;
+
+		return false;
+
+	}
+}
+
+void calculate_move(state x, state y) {
+	int dif = 0;
+	int I = 0, J = 0;
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			if (x.f[i][j] != y.f[i][j]) {
+				dif++;
+				I = i;
+				J = j;
+			}
+		}
+	} 
+
+	if (dif == 1) {
+		printf("[%d,%d] rotate\n", I+1, J+1);
+		return;
+	}
+
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			if (inside(i, j + 1) && x.f[i][j] == y.f[i][j + 1] && x.f[i][j + 1] == y.f[i][j] && x.f[i][j] != y.f[i][j]) {
+				if (x.f[i][j] != 0)
+					printf("[%d,%d] right\n", i + 1, j + 1);
+				else
+					printf("[%d,%d] left\n", i + 1, j + 1 + 1);
+				return;
+			}
+			if (inside(i + 1, j) && x.f[i][j] == y.f[i + 1][j] && x.f[i + 1][j] == y.f[i][j] && x.f[i][j] != y.f[i][j]) {
+				if (x.f[i][j] != 0)
+					printf("[%d,%d] down\n", i + 1, j + 1);
+				else
+					printf("[%d,%d] up\n", i + 1 + 1, j + 1);
+				return;
+			}
+		}
+	}
+}
+
+int rotate(int e) {
+	int a = abs(e);
+	if (a == 10)
+		return sgn(e) * 20;
+	else if (a == 20)
+		return sgn(e) * 30;
+	else if (a == 30)
+		return sgn(e) * 40;
+	else if (a == 40)
+		return sgn(e) * 10;
+	else if (a == 50)
+		return sgn(e) * 60;
+	else if (a == 60)
+		return sgn(e) * 50;
+}
+
+int main() {
+	cout << "Started\n";
+	cout << "Side length = "; cin >> n;
+	cout << "Rotating pieces ? (0 = NO, 1 = YES) - "; cin >> rotations;
+	state start;
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			int e;
+			cin >> e;
+			start.f[i][j] = e;
+			if (8 <= e && e <= 12 && e != 10) i_start = i, j_start = j;
+			if (13 <= e && e <= 16) i_end = i, j_end = j;
+		}
+	}
+	double start_clock = clock();
+	queue<state> q;
+	q.push(start);
+	d[start] = 0;
+	used[start] = true;
+	state from;
+	while (!q.empty()) {
+		from = q.front();
+		if (from.possible && solved(from)) {
+			break;
+		}
+		q.pop();
+		//Movements
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++)
+				if (from.f[i][j] == 0) {
+					for (int k = 0; k < 4; k++) {
+						const int I = i + di[k], J = j + dj[k];
+						if (inside(I, J) && from.f[I][J] > 0) {
+							const int e = abv(from.f[I][J]);
+							if (1 <= e && e <= 7) {
+								state to = from;
+								to.possible = (to.f[I][J] != 7);
+								swap(to.f[i][j], to.f[I][J]);
+								if (!used[to]) {
+									used[to] = true;
+									d[to] = d[from] + 1;
+									p[to] = from;
+									q.push(to);
+								}
+							}
+						}
+					}
+				}
+		}
+
+		//Rotations
+		if (rotations)
+			for (int i = 0; i < n; i++)
+				for (int j = 0; j < n; j++)
+					if ( abs(from.f[i][j]) % 10 == 0 && from.f[i][j] != 0) {
+						state to = from;
+						to.f[i][j] = rotate(to.f[i][j]);
+						to.possible = true;
+						if (!used[to]) {
+							used[to] = true;
+							d[to] = d[from] + 1;
+							p[to] = from;
+							q.push(to);
+						}
+					}
+
+
+	}
+	if (!solved(from)) {
+		cout << "\nNo solution :(\n";
+		return 0;
+	}
+	else {
+		cout << "\nsolved:)\n";
+	}
+
+	int moves = d[from];
+	printf("min moves = %d\n", moves);
+	state x = from;
+	vector<state> path;
+	for (int i = 0; i <= moves; i++) {
+		path.push_back(x);
+		x = p[x];
+	}
+	reverse(path.begin(), path.end());
+	for (int i = 0; i < path.size() - 1; i++) {
+		calculate_move(path[i], path[i + 1]);
+	}
+
+
+
+	cout << "\ntime = " << (clock() - start_clock) / (double)CLOCKS_PER_SEC << "s\n";
+}
+/*
+12 -6 -6 -3
+7 7 -2 -4
+0 5 4 0
+16 0 6 0
+
+12 3  7 7
+7 0 0 1
+7 7 3 3
+7 1 7 15
+
+
+12 6 5 -3
+0 7 0 6
+6 7 0 -5
+16 -6 7 -4
+
+0 0 6 0 6
+-2 6 6 6 3
+5 0 16 0 6
+5 0 6 9 0
+-1 4 2 4 0
+
+0 0 6 6 6
+-2 0 0 6 3
+6 0 16 6 0
+5 0 2 9 0
+-1 5 6 4 4
+
+
+rotating
+12 6 3 7
+7 7 0 50
+7 7 60 0
+7 7 1 14
+
+2 1 6 13 0
+10 5 3 0 4
+40 7 50 0 -3
+1 7 10 5 0
+0 0 20 12 4
+*/
