@@ -1,5 +1,4 @@
-
-#include<bits/stdc++.h>
+﻿#include<bits/stdc++.h>
 
 //#include "rubo.h"
 #define MP make_pair
@@ -9,11 +8,11 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define i first
-//#define j second
+//#define x first
+//#define y second
 
 //#define ld long double
-#define dbl  long double
+#define dbl long double
 #define pll pair<long long,long long>
 #define pii pair<int,int>
 #define all(j) j.begin(), j.end()
@@ -30,185 +29,299 @@
 
 using namespace std;
 
-int n, m;
+int n;
 
-struct point {
-    dbl x, y, z;
-};
+const dbl R = 6370;
+//const dbl R = 1.0;
 
-dbl R = 6370;
+const dbl EPS = 1e-7;
+const int INF = 1e9;
 
-typedef vc<point> polygon;
-vc<polygon> polygons;
-
-dbl PI = acos(-1);
+dbl PI = acos(-1.0);
 
 dbl toRad(dbl ang) {
-    return 2 * PI * ang / 360.0;
+    return ang * PI / 180.0;
 }
 
-point pointFromPolar(int t, int l) {
-    point p;
-
-    dbl T = toRad(t);
-    dbl L = toRad(l);
-
-    p.x = R * cos(T);
-    p.y = R * sin(T);
-    p.z = R * sin(L);
-    return p;
+dbl toDeg(dbl rad) {
+    return rad * 180.0 / PI;
 }
 
-point readPoint() {
-    int t, l;
-    cin >> t >> l;
-
-    return pointFromPolar(t, l);
+bool eq(dbl a, dbl b) {
+    return abs(a - b) < EPS;
 }
 
-dbl distEuclid(point a, point b) {
-    return
-            sqrt(
-                    SQ(a.x - b.x) +
-                    SQ(a.y - b.y) +
-                    SQ(a.z - b.z)
-            );
+struct pnt {
+    dbl x, y, z;
+
+    pnt() {}
+
+    pnt(dbl x, dbl y, dbl z) : x(x), y(y), z(z) {}
+
+    pnt(dbl fi, dbl lb) {
+        fi = toRad(fi);
+        lb = toRad(lb);
+        z = sin(fi);
+        x = cos(lb) * cos(fi);
+        y = sin(lb) * cos(fi);
+    }
+
+    dbl norm() {
+        return sqrt(SQ(x) + SQ(y) + SQ(z));
+    }
+
+    dbl dist(pnt b) {
+        return pnt(x - b.x, y - b.y, z - b.z).norm();
+    }
+
+    pnt cross(pnt b) {
+        return pnt(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
+    }
+
+    dbl dot(pnt b) {
+        return x * b.x + y * b.y + z * b.z;
+    }
+
+    dbl arcDist(pnt b) {
+        dbl cosine = dot(b) / (norm() * b.norm());
+        dbl angle = acos(cosine);
+        return angle;
+    }
+
+    bool belongsToArc(pnt p1, pnt p2) {
+        return
+                eq(
+                        arcDist(p1) + arcDist(p2),
+                        p1.arcDist(p2)
+                );
+    }
+
+    bool operator<(const pnt &b) const {
+        return MP(x, MP(y, z)) < MP(b.x, MP(b.y, b.z));
+
+    }
+
+    void print() {
+        cout << x << ' ' << y << ' ' << z << endl;
+    }
+};
+
+
+struct plane0 {
+    dbl a, b, c;
+
+    plane0() {}
+
+    plane0(pnt p1, pnt p2) {
+        pnt cross = p1.cross(p2);
+        a = cross.x;
+        b = cross.y;
+        c = cross.z;
+    }
+};
+
+pnt readPoint() {
+    dbl fi, lb;
+    cin >> fi >> lb;
+
+    return pnt(fi, lb);
 }
 
-dbl dist(point a, point b) {
-    dbl d = distEuclid(a, b);
+typedef vc<pnt> polygon;
 
-    dbl ang = 2 * asin(d / (2 * R));
-    return R * ang;
+vc<polygon> polygons;
+
+int gauss(vector<vector<dbl> > a, vector<dbl> &ans) {
+    int n = (int) a.size();
+    int m = (int) a[0].size() - 1;
+
+    vector<int> where(m, -1);
+    for (int col = 0, row = 0; col < m && row < n; ++col) {
+        int sel = row;
+        for (int i = row; i < n; ++i)
+            if (abs(a[i][col]) > abs(a[sel][col]))
+                sel = i;
+        if (abs(a[sel][col]) < EPS)
+            continue;
+        for (int i = col; i <= m; ++i)
+            swap(a[sel][i], a[row][i]);
+        where[col] = row;
+
+        for (int i = 0; i < n; ++i)
+            if (i != row) {
+                double c = a[i][col] / a[row][col];
+                for (int j = col; j <= m; ++j)
+                    a[i][j] -= a[row][j] * c;
+            }
+        ++row;
+    }
+
+    ans.assign(m, 0);
+    for (int i = 0; i < m; ++i)
+        if (where[i] != -1)
+            ans[i] = a[where[i]][m] / a[where[i]][i];
+    for (int i = 0; i < n; ++i) {
+        double sum = 0;
+        for (int j = 0; j < m; ++j)
+            sum += ans[j] * a[i][j];
+        if (abs(sum - a[i][m]) > EPS)
+            return 0;
+    }
+
+    for (int i = 0; i < m; ++i)
+        if (where[i] == -1)
+            return INF;
+    return 1;
 }
 
-bool solveForTwo(dbl a1, dbl b1, dbl c1, dbl a2, dbl b2, dbl c2, dbl& x, dbl& y) {
-    dbl det = a1 * b2 - b1 * a2;
-    if (det == 0)
+bool areIntersecting(pnt v1, pnt v2, pnt u1, pnt u2, pnt &inter) {
+
+    plane0 p1(v1, v2);
+    plane0 p2(u1, u2);
+
+
+    // if planes coincide
+    vc<vc<dbl>> A = {
+            {p1.a, p1.b, p1.c, 0},
+            {p2.a, p2.b, p2.c, 100},
+    };
+    vc<dbl> ans;
+    if (gauss(A, ans) == 0) {
         return false;
-    x = (c1 * b2 - c2 * b1) / det;
-    y = (a1 * c2 - a2 * c1) / det;
-    return true;
-}
-
-vector<dbl> getSolution(vector<vector<dbl>> sys) {
-    vector<dbl> res(3, 0);
-    for(int i = 0; i < 3; i++)
-        if (sys[0][i] == 0 && sys[1][i] == 0)
-        {
-            res[i] = 1;
-            return res;
-        }
-
-    dbl x, y;
-    if (solveForTwo(sys[0][1], sys[0][2], sys[0][3],
-                sys[1][1], sys[1][2], sys[1][3],
-                x, y)) {
-        res[0] = 1;
-        res[1] = x;
-        res[2] = y;
-        return res;
     }
-    if (solveForTwo(sys[0][0], sys[0][2], sys[0][3],
-                    sys[1][0], sys[1][2], sys[1][3],
-                    x, y)) {
-        res[1] = 1;
-        res[0] = x;
-        res[2] = y;
-        return res;
+
+    // else intersect
+    A = {
+            {p1.a, p1.b, p1.c, 0},
+            {p2.a, p2.b, p2.c, 0},
+            {1,    1,    1,    70},
+    };
+    ans.clear();
+
+    int cnt = gauss(A, ans);
+//    assert(cnt != 0);
+//    dbCont(ans);
+    inter.x = ans[0];
+    inter.y = ans[1];
+    inter.z = ans[2];
+
+    dbl nr = inter.norm();
+    inter.x /= nr;
+    inter.y /= nr;
+    inter.z /= nr;
+
+    // check that belongs to both arcs
+    if (
+            inter.belongsToArc(v1, v2) &&
+            inter.belongsToArc(u1, u2)) {
+        return true;
     }
-    if (solveForTwo(sys[0][0], sys[0][1], sys[0][3],
-                    sys[1][0], sys[1][1], sys[1][3],
-                    x, y)) {
-        res[0] = x;
-        res[1] = y;
-        res[2] = 1;
-        return res;
+
+    inter.x *= -1;
+    inter.y *= -1;
+    inter.z *= -1;
+    if (
+            inter.belongsToArc(v1, v2) &&
+            inter.belongsToArc(u1, u2)) {
+        return true;
     }
+    return false;
 }
 
-point getNormalToSurf(point a, point b) {
-
-
-}
-
-// Vahagn implemented this
-bool areIntersecting(point a, point b, point c, point d, point &intersection) {
-
-}
-
-// returns points of intersection sorted on distance to a
-vc<point> getIntersections(point a, point b) {
-    vc<pair<dbl, point>> intersectionsWithDist;
-
+vc<pnt> getIntersections(pnt a, pnt b) {
+    vc<pair<dbl, pnt>> resWithDist;
     for (polygon pol: polygons) {
         loop(i, pol.size()) {
-            point p1 = pol[i];
-            point p2 = pol[(i + 1) % pol.size()];
-
-            point intersection;
-            if (areIntersecting(a, b, p1, p2, intersection)) {
-                intersectionsWithDist.push_back({dist(a, intersection), intersection});
+            pnt inter;
+            if (areIntersecting(a, b, pol[i], pol[(i + 1) % pol.size()], inter)) {
+//                cout << "intersect" << endl;
+                resWithDist.push_back({a.arcDist(inter), inter});
             }
         }
     }
 
-    vc<point> intersections;
-    for (auto pr : intersectionsWithDist) {
-        intersections.push_back(pr.second);
+    sort(all(resWithDist));
+    vc<pnt> res;
+    for (auto p : resWithDist) {
+        res.push_back(p.second);
     }
-    return intersections;
+    return res;
 }
 
-
 int main() {
+//    freopen("in.txt", "r", stdin);
+
     cin >> n;
     loop(i, n) {
         int k;
         cin >> k;
         polygon p;
-
         loop(j, k) {
             p.push_back(readPoint());
         }
         polygons.push_back(p);
     }
 
-    vc<point> points;
-
+    vc<pnt> route;
+    int m;
     cin >> m;
     loop(i, m) {
-        points.push_back(readPoint());
+        route.push_back(readPoint());
     }
 
 
-    dbl length_ocean = 0;
-    dbl length_land = 0;
-    int on_land = 1;
+    dbl lenLand = 0;
+    dbl lenOcean = 0;
+    int isLand = 1;
 
-    point cur = points.front();
+//    cout << "Route : ";
+//    for (auto p : route) {
+//        p.print();
+//    }
+//    cout << "--------------" << endl;
 
-    for (int i = 1; i < points.size(); i++) {
-        point nxt = points[i];
+    pnt cur = route.front();
+    for (int i = 1; i < route.size(); i++) {
+        pnt nxt = route[i];
+        vc<pnt> intersections = getIntersections(cur, nxt);
 
-        // all intersections the plane meets from cur to nxt
-        vc<point> intersections = getIntersections(cur, nxt);
 
-        for (point intersection: intersections) {
-            if (on_land) {
-                length_land += dist(cur, intersection);
-                cur = intersection;
-            } else {
-                length_ocean += dist(cur, intersection);
-                cur = intersection;
-            }
-            on_land ^= 1;
+        for (pnt inter: intersections) {
+            dbl curLen = cur.arcDist(inter);
+            if (isLand) lenLand += curLen;
+            else lenOcean += curLen;
+            isLand ^= 1;
+
+            cur = inter;
         }
+        // go to nxt
+        dbl curLen = cur.arcDist(nxt);
+        if (isLand) lenLand += curLen;
+        else lenOcean += curLen;
+        cur = nxt;
+
+
     }
 
-    dbl total = length_land + length_ocean;
+    lenLand *= R;
+    lenOcean *= R;
 
-    printf("%.10Lf %.10Lf\n", total, length_ocean / total * 100.0);
+//    db(lenLand);
+//    db(lenOcean);
+
+    dbl total = lenLand + lenOcean;
+    dbl perc = lenOcean / total * 100.0;
+    printf("%.10Lf %.10Lf\n", total, perc);
 
     return 0;
 }
+
+
+/*
+1
+4 -45 0 45 0 45 90 -45 90
+5 0 180 0 359 0 160 0 170 0 180
+
+
+ */
+
