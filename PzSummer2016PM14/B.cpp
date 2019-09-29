@@ -46,11 +46,6 @@ int BS = 29;
 int A = 0;
 bool ask(vc<pdd > points) {
     A++;
-    if(A > 60){
-        cout << "boz" << endl;
-        assert(false);
-    }
-
     //////////////////////////////////////////////
 //    loop(i, points.size() - 1) {
 //        pdd a = points[i];
