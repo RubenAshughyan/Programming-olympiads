@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(Programming-olympiads OpenCupGrandPrixOfEurasia/F.cpp)
+add_executable(Programming-olympiads Misc/AndoksProblem.cpp)
