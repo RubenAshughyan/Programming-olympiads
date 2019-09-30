@@ -33,7 +33,7 @@ using namespace std;
 const int N = 300 + 50;
 
 
-int n, s;
+ll n, s;
 map<vc<int>, int> mp;
 
 void test(int t) {
