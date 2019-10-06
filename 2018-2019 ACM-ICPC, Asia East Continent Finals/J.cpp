@@ -16,7 +16,7 @@
 //#define j second
 
 //#define ld long double
-#define dbl  double
+#define dbl long double
 #define pll pair<long long,long long>
 #define pii pair<int,int>
 #define all(j) j.begin(), j.end()
@@ -34,40 +34,59 @@
 using namespace std;
 
 
-const int N = 1000*1000+7;
-const int MOD = 1000*1000*1000 + 7;
+const int N = 100 * 1000 + 7;
+const int MOD = 1000 * 1000 * 1000 + 7;
 
 
+string s;
 int n;
-void test(){
+
+vc<int> prefixFunction() {
+    vc<int> pf(n, 0);
+
+    for (int i = 1; i < n; i++) {
+        int pos;
+        for (pos = pf[i - 1]; pos > 0; pos = pf[pos - 1]) {
+            if (s[i] == s[pos]) {
+                break;
+            }
+        }
+        pf[i] = pos + (s[i] == s[pos]);
+    }
+
+    return pf;
 
 }
 
+
+void solve() {
+    cin >> s;
+    reverse(all(s));
+    n = s.length();
+    vc<int> pf = prefixFunction();
+    dbl d = 0;
+    for (int i = 0; i < pf.size(); ++i) {
+        if (pf[i] == 0)
+            d += 1.0 / (i + 1);
+    }
+    printf("%.15Lf\n", 1.0 / d);
+}
+
 int main() {
+
+//
     int t = 1;
     cin >> t;
-    loop(i,t){
-        test();
+    while (t--) {
+        solve();
     }
-
     return 0;
 }
 
 /*
-100
-2 AND
-5 5
-1
-
-5 AND
-5 4 3 2 1
-1 2 2 4
-5 XOR
-5 4 3 2 1
-1 2 2 4
-5 OR
-5 4 3 2 1
-1 2 2 4
-
+3
+aba
+aaaaaaaaaaa
+abcd
 
  */

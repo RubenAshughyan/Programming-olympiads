@@ -34,40 +34,53 @@
 using namespace std;
 
 
-const int N = 1000*1000+7;
-const int MOD = 1000*1000*1000 + 7;
+const int N = 1000 * 1000 + 7;
+const int MOD = 1000 * 1000 * 1000 + 7;
 
-ll f(ll n){
-    if (n == 0)
-        return 0;
-    return f(n / 10) + SQ(n%10);
-}
-void test(){
-    ll a, b, k;
-    cin >> k >> a >> b;
-    if (a / (9 * 9 * 18) > k){
-        cout << 0 << endl;
-        return;
-    }
-    else {
-        ll start = (a-1) / k * k + k, s=0;
 
-        for (; start <= b; start+=k) {
-            if (start > 9 * 9 * 18 * k)
-                break;
-            if (f(start) * k == start)
-                s++;
-        }
-        cout << s << endl;
+
+void test() {
+    int n, m;
+    cin >> n >> m;
+
+
+    ll s1 = 0;
+    loop(i, n) {
+        ll e;
+        cin >> e;
+        s1 += e;
     }
+
+
+    ll s2 = 0;
+    loop(i, m) {
+        ll e;
+        cin >> e;
+        s2 += e;
+    }
+
+    if (n <= m) cout << "Yes" << endl;
+    else cout << "No" << endl;
 }
 
 int main() {
-    int t = 1;
-    // cin >> t;
-    loop(i,t){
+    int t;
+    cin >> t;
+    loop(i, t) {
         test();
     }
 
     return 0;
 }
+
+/*
+2
+3 2
+1 1 1
+2 2
+1 1
+4
+3
+
+
+ */
