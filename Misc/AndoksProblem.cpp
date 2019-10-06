@@ -18,7 +18,7 @@ using namespace std;
 // W := the weights of stones
 const int N = 6;
 const int M = 2;
-const vector<int> W{1, 2, 3, 4, 5, 6};
+const vector<int> W{1, 4, 9, 16, 25, 36};
 
 int sum(int mask, vector<int> weights) {
     int answer = 0;
@@ -50,23 +50,23 @@ bool check(vector<vector<int>> weightings) {
                 scale(weightings[0][0], weightings[0][1], curWeights) == weightings[0][2] &&
                 scale(weightings[1][0], weightings[1][1], curWeights) == weightings[1][2];
         countCorrect += match;
-        if(countCorrect > 1) return false;
+        if (countCorrect > 1) return false;
     } while (next_permutation(curWeights.begin(), curWeights.end()));
 
     return countCorrect == 1;
 }
 
-void print(vector<vector<int>> weightings){
+void print(vector<vector<int>> weightings) {
     cout << "\n\nPossible solution:" << endl;
-    for(auto weighting: weightings){
-        for(int i = 0; i < 2; i++){
+    for (auto weighting: weightings) {
+        for (int i = 0; i < 2; i++) {
             int side = weighting[i];
-            for(int j = 0; j < N; j++){
-                if((side >> j) & 1){
+            for (int j = 0; j < N; j++) {
+                if ((side >> j) & 1) {
                     cout << W[j] << ' ';
                 }
             }
-            if(i == 0){
+            if (i == 0) {
                 cout << "-vs- ";
             }
         }
@@ -100,7 +100,7 @@ int main() {
             }
         }
     }
-    for(auto solution: solutions){
+    for (auto solution: solutions) {
         print(solution);
     }
 
