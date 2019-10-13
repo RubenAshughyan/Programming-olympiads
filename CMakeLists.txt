@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(Programming-olympiads)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads PzSummer2016UralFUDandelion/H.cpp)
+add_executable(Programming-olympiads OpenCupGrandPrixOfKorea/J.cpp)
