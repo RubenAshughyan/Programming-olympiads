@@ -31,10 +31,7 @@ using namespace std;
 
 const int N = 250 * 1000 + 5;
 
-int n;
-
 int main() {
-
 
     return 0;
 }

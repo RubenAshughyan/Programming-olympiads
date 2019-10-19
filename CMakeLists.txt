@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads OpenCupGrandPrixOfKorea/J.cpp)
+add_executable(Programming-olympiads CentralSubregional2016/I.cpp)
