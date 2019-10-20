@@ -27,175 +27,118 @@
 #define db(x) cout << #x << " = " << x << endl
 #define dbCont(x) cout << #x << ": "; for(auto shun: x) cout << shun << ' '; cout<<endl;
 
+using namespace std;
 
 
-const int INF = 1e9;
+const int N = 5000+5;
 
-struct node {
-    int x, y;
-    node *l, *r;
-    int sz;
-    node(int _x) {
-        x = _x;
-        y = rand();
-        l = NULL;
-        r = NULL;
-        sz = 1;
-    }
-
-    node(int _x, int _y, node *_l, node *_r) {
-        x = _x;
-        y = _y;
-        l = _l;
-        r = _r;
-    }
-};
-
-int node_sz(node * v){
-    if(v == NULL) return 0;
-    return v->sz;
-}
-
-void recalc(node * v){
-    if(v == NULL) return;
-    v->sz = 1+ node_sz(v->l) + node_sz(v->r);
-}
-
-node * merge(node * l, node * r){
-    node * res;
-
-    if(l == NULL) res = r;
-    else if(r == NULL) res = l;
-    else if(l->y < r->y){
-        node * new_left = merge(l,r->l);
-        node * new_right = r->r;
-        res = new node(r->x, r->y,new_left,new_right);
-    }
-    else{
-        node * new_right = merge(l->r,r);
-        node * new_left = l->l;
-        res = new node(l->x, l->y,new_left,new_right);
-    }
-    recalc(res);
-    return res;
-}
-
-void split(node *v, int _x, node *&l, node *&r){
-    if(v == NULL){
-        l = r = NULL;
-    }
-    else if(_x <= v->x){
-        split(v->l,_x,l, v->l);
-        r = v;
-    }
-    else{
-        split(v->r,_x, v->r, r);
-        l = v;
-    }
-    recalc(l);
-    recalc(r);
-}
-
-
-void insert(node * &root, int _x){
-    node * l, * r;
-    split(root,_x,l,r);
-
-    node * m = new node(_x);
-    root = merge(merge(l,m),r);
-}
-
-void erase(node * & root ,int _x){
-    node * l, *m, * r;
-    split(root,_x,l,r);
-    split(r,_x+1,m,r);
-
-    root = merge(l,r);
-}
-
-int n, m;
 int a[N];
-map<int, node *> mp;
+int n;
+vc<int> g[N];
 
-void dfs(node * v){
-    if(v == NULL) return;
+int dp[N][N];
 
-    dfs(v->l);
-    printf("%d ",v->x);
-    dfs(v->r);
+int subtreeSize[N];
+void dfsSubtreeSize(int v, int par){
+    vc<int> childs;
+    for(int to : g[v]){
+        if(to != par){
+            childs.push_back(to);
+        }
+    }
+
+    if(childs.size() == 0) {
+        subtreeSize[v] = 1;
+        return;
+    }
+    for(int to: g[v]){
+        if(to != par){
+            dfsSubtreeSize(to,v);
+            subtreeSize[v] += subtreeSize[to];
+        }
+    }
 }
 
-void out(){
-    for(auto p : mp){
-        printf("%d: ",p.first);
-        dfs(p.second);
-        printf("\n");
+void dfs(int v, int par){
+//    printf("v par, %d %d\n",v,par);
+
+    vc<int> childs;
+    for(int to : g[v]){
+        if(to != par){
+            childs.push_back(to);
+        }
     }
-    printf("--------------\n");
+
+    for(int ch : childs){
+        dfs(ch, v);
+    }
+
+    if(childs.empty()) {
+        loop(sum,N) {
+            dp[v][sum] = 1e6;
+        }
+        loop(sum,2){
+            dp[v][sum] = abs(a[v] - sum);
+        }
+    } else if(childs.size() == 1){
+        int ch = childs.front();
+        loop(sum, N){
+            dp[v][sum] = dp[ch][sum] + abs(a[v] - sum);
+        }
+    } else {
+        loop(sum,subtreeSize[v]+1){
+            int c1 = childs[0], c2 = childs[1];
+            int best = 1e8;
+            for(int i = 0; i <= sum; i++){
+                if(i <= subtreeSize[c1] && sum-i <= subtreeSize[c2]) {
+                    int val = dp[c1][i] + dp[c2][sum - i] + abs(a[v] - sum);
+                    best = min(best, val);
+                }
+            }
+
+            dp[v][sum] = best;
+        }
+    }
 }
 
+int main(){
+    scanf("%d",&n);
+    loop(i,n) scanf("%d",&a[i]);
 
-int main() {
-/*
-    node * root = NULL;
-    while(1){
-        string op;
-        int x;
-        cin >> op >> x;
-        if(op == "i"){
-            insert(root,x);
-        }
-        else{
-            erase(root,x);
-        }
-
-        printf("sz %d\n",node_sz(root));
-        dfs(root);
-        printf("\n");
+    loop(i,n-1){
+        int u,v;
+        scanf("%d%d",&u,&v);
+        u--,v--;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
 
-*/
-    scanf("%d%d", &n, &m);
+    dfsSubtreeSize(0, -1);
 
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &a[i]);
-        node *&root = mp[a[i]];
-        insert(root,i);
+    dfs(0, -1);
+
+    int ans = 1e9;
+    loop(sum, subtreeSize[0]+1) {
+        ans = min(ans, dp[0][sum]);
     }
-
-//    out();
-
-
-    int ind, nw;
-    for (int i = 0; i < m; i++) {
-        scanf("%d%d", &ind, &nw);
-
-        int old = a[ind];
-
-//        dfs(mp[old]); cout << endl;
-        erase(mp[old], ind);
-//        dfs(mp[old]); cout << endl;
-
-
-//        dfs(mp[nw]); cout << endl;
-        insert(mp[nw],ind);
-//        dfs(mp[nw]); cout << endl;
-
-
-        node *l,*r;
-        split(mp[nw],ind,l,r);
-        printf("%d\n",node_sz(l));
-        mp[nw] = merge(l,r);
-
-        a[ind] = nw;
-
-//        printf("array is :\n");
-//        for(int j = 0; j < n; j++){
-//            cout<< a[j] << ' ';
-//        }
-//        cout << endl;
-    }
-
+    printf("%d\n",ans);
 
     return 0;
 }
+
+
+/*
+
+ 2
+ 1 0
+ 1 2
+
+ 5
+ 5 1 3 0 1
+ 1 2
+ 1 3
+ 3 4
+ 3 5
+
+
+ */
