@@ -1,5 +1,5 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
+#pragma GCC optimize "-O1"
+#pragma GCC optimize "-O2"
 #pragma GCC optimize "-O3"
 
 

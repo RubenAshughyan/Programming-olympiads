@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads "MIPT 2015/B8b2.cpp")
+add_executable(Programming-olympiads RauIndependenceCup2019/J.cpp)
