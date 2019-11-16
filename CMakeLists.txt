@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads PzSummer2016DPRK/D.cpp)
+add_executable(Programming-olympiads PzWinter2019Winter300iq/C.cpp)
