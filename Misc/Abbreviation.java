@@ -28,7 +28,7 @@ public class Abbreviation {
         while (sc.hasNextLine()) {
             TreeSet<String> treeSet = new TreeSet<>();
             String line = sc.nextLine()+" ";
-            Pattern pattern = Pattern.compile("\\b(([A-Z][a-z]+\\s)+[A-Z][a-z]+)[\\s|,|\\.]");
+            Pattern pattern = Pattern.compile("\\b(([a-Z][a-z]+\\s)+[a-Z][a-z]+)[\\s|,|\\.]");
             Matcher matcher = pattern.matcher(line);
 
             boolean replaced = false;
