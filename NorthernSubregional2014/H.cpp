@@ -174,39 +174,6 @@ int main() {
 
 
     //dijkstras
-    set<pll > st;
-    vc<ll> used(n, false);
-    vc<ll> d(n, 1e12);
-    vc<ll> par(n, -1);
-
-    st.insert({A.z, ai});
-    used[ai] = true;
-    d[ai] = 0;
-
-    while (!st.empty()) {
-        int from = st.begin()->second;
-        ll curCost = st.begin()->first;
-
-        if (from == bi) {
-            break;
-        }
-
-        st.erase(st.begin());
-
-        // relaxes
-        for (pll p: g[from]) {
-            int to = p.first;
-            ll weight = p.second;
-            if (!used[to]) {
-                if (max(weight, curCost) < d[to]) {
-                    st.erase({d[to], to});
-                    par[to] = from;
-                    d[to] = max(weight, curCost);
-                    st.insert({d[to], to});
-                }
-            }
-        }
-    }
 
 
     vc<triangle> path;

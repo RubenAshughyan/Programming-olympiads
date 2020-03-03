@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads Codeforces625Div2/E.cpp)
+add_executable(Programming-olympiads OzonTechChallenge2020/D.cpp)
