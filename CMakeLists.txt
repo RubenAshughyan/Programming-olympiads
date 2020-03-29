@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads KickstartA2020/C/main.cpp)
+add_executable(Programming-olympiads CodeforcesEdu84/A.cpp)
