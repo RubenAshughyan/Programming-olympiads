@@ -60,84 +60,64 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 
 const int N = 300 * 1000 + 5;
 
-int DEBUG = 0;
+int DEBUG = 1;
 
 using namespace std;
 
-int n;
-int p[N];
-int c[N];
 
-void test(){
-    scanf("%d",&n);
-    loop(i,n){
-        scanf("%d",&p[i]);
-        p[i]--;
+int parent[N];
+
+int getPar(int v) {
+    if (parent[v] == v) return v;
+    return parent[v] = getPar(parent[v]);
+}
+
+void unite(int u, int v) {
+    u = getPar(u);
+    v = getPar(v);
+    if (u == v) return;
+
+    if (rand() % 2) swap(u, v);
+
+    parent[u] = v;
+}
+
+void test(int k) {
+
+    vc<vc<int>> v = {
+            {((1 << 18) - 1), ((1 << 18) - 1), k},
+            {k,               (1 << 17),       k},
+            {0,               k,               k},
+    };
+
+    auto dp = v;
+    loop(i,3){
+        loop(j,3){
+            if(i +j == 0) continue;
+
+            int up = i-1 >=0 ? dp[i-1][j]&v[i][j] : 0;
+            int left = j-1 >=0 ? dp[i][j-1]&v[i][j] :0;
+            dp[i][j] = max(up,left);
+        }
     }
-    loop(i,n) scanf("%d",&c[i]);
+
+//    assert(dp[2][2]
 
 
-    vc<int> used(n,0);
-    int best = 1e7;
-
-    for(int i = 0; i < n; i++){
-        if(used[i]) continue;
-
-        int v = i;
-        used[v] = 1;
-
-        db(v);
-        vc<int> cycle;
-        cycle.PB(v);
-        while(!used[p[v]]){
-            v = p[v];
-            used[v] = 1;
-            cycle.PB(v);
+//
+    cout << 3 << ' ' << 3 << endl;
+    loop(i, 3) {
+        loop(j, 3) {
+            cout << v[i][j] << ' ';
         }
-
-
-        if(DEBUG) {
-            loop(i, cycle.size()) cout << cycle[i] + 1 << ' ';
-            cout << endl;
-        }
-
-
-        int len = cycle.size();
-        set<int> divs;
-        for(int j = 1; j <= len; j++){
-            if(len % j == 0) divs.insert(j);
-        }
-
-        for(int d: divs){
-            for(int start = 0; start < d; start++){
-                vc<int> xx;
-                loop(j,len/d) xx.PB( cycle[(start+ (j*d)) % len]);
-
-                bool ok  = true;
-                loop(j,xx.size()){
-                    if(c[xx[j]] != c[xx[0]]) ok = false;
-                }
-
-                if(ok) {
-                    best = min(best, d);
-                }
-            }
-        }
-
+        cout << endl;
     }
-    cout << best << endl;
 }
 
 int main() {
-    int t;
-    scanf("%d",&t);
-    loop(i,t){
-        test();
-
-    }
-
-
-
+    int k;
+    cin >> k;
+    test(k);
 
     return 0;
 }
