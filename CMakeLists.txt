@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads CodeJamQual2020/C.cpp)
+add_executable(Programming-olympiads Timus/1148BuildingTowers.cpp)
