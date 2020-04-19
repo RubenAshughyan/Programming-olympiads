@@ -60,11 +60,57 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 
 const int N = 500 * 1000 + 5;
 
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+int n;
+int b[N];
+
+int d[N];
+
 
 int main() {
+    cin >> n;
+
+    ll ans = 0;
+    for(int i = 1; i <= n; i++){
+        scanf("%d",&b[i]);
+        ans = max((int)ans, b[i]);
+    }
+
+    for(int i = 1; i <= n; i++) {
+        d[i] = i - b[i];
+    }
+
+    map<int, ll> mp;
+
+    for(int i = 1; i <= n; i++){
+        mp[d[i]] += b[i];
+        ans = max(ans, mp[d[i]]);
+    }
+
+    cout << ans << endl;
+
+
+
+    return 0;
 }
+
+
+/*
+
+5
+3 7 9 7 8
+5 2 5 7 5
+
+ 5
+1 1 1 1 1
+1 1 1 1 1
+
+
+
+ */
+
+
+

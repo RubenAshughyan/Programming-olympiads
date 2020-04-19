@@ -64,7 +64,43 @@ int DEBUG = 1;
 
 using namespace std;
 
-int n,h,m;
+
+void test(int testIndex){
+    ll n,d;
+    cin >> n >> d;
+
+    vc<ll> v(n);
+    loop(i,n) cin >> v[i];
+
+
+    ll c = d;
+
+    for(int i = n-1; i >= 0; i--) {
+        if (c % v[i] != 0){
+            c -= c % v[i];
+        }
+    }
+
+
+
+    printf("Case #%d: %lld\n", testIndex, c);
+}
 
 int main() {
+    int t;
+    cin >> t;
+    loop(I,t)  test(I+1);
+    return 0;
 }
+
+
+/*
+
+
+
+
+
+ */
+
+
+

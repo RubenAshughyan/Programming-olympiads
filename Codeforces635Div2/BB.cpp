@@ -27,7 +27,7 @@
 #define ll long long
 #define ull unsigned long long
 #define vc vector
-#define SQ(j) (j)*(j)
+#define SQ(j) ((j)*(j))
 #define ch first
 #define range second
 //
@@ -58,13 +58,97 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 }
 
 
-const int N = 500 * 1000 + 5;
-
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+const int N = 200 * 1000 + 5;
+
+
+
+
+
+vc<ll> X, Y, Z;
+
+ll MX = 3*1e18+3;
+ll f1(int xi, int yi){
+
+    ll ans = MX;
+    loop(zi, zN){
+        ll x = X[xi];
+        ll y = Y[yi];
+        ll z = Z[zi];
+
+        ll cur = SQ(x-y) + SQ(y-z) + SQ(x-z);
+        ans = min(ans, cur);
+    }
+    return ans;
+}
+
+ll solve(){
+    ll ans = MX;
+    for (int xi = 0; xi < X.size(); xi++) {
+        ll x = X[xi];
+
+
+    }
+
+    db(ans);
+    cout << ans << endl;
+}
+
+void test() {
+    int xN, yN, zN;
+    cin >> xN >> yN >> zN;
+    X.resize(xN);
+    Y.resize(yN);
+    Z.resize(zN);
+    loop(i, xN) cin >> X[i];
+    loop(i, yN) cin >> Y[i];
+    loop(i, zN) cin >> Z[i];
+
+    ll ans = solve();
+
+    swap(X,Z);
+    ans = min(ans, solve);
+
+    swap(X,Y);
+    ans = min(ans, solve());
+
+
+    cout << ans << endl;
+}
 
 int main() {
+
+//    test();
+    int t;
+    cin >> t;
+    loop(i, t) test();
+
+
+    return 0;
 }
+
+
+/*
+2 2 3
+7 8
+6 3
+3 1 4
+
+
+
+ 8 8
+7 5
+1 7
+6 1
+3 7
+8 3
+2 1
+4 5
+
+ */
+
+
+

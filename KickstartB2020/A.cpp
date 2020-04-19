@@ -64,7 +64,37 @@ int DEBUG = 1;
 
 using namespace std;
 
-int n,h,m;
+
+void test(int testIndex){
+    int n;
+    cin >> n;
+    vc<int> v(n);
+    loop(i,n) cin >> v[i];
+
+    int ans = 0;
+    for(int i = 1; i < n-1; i++){
+        if(v[i] > v[i-1] && v[i] > v[i+1])ans++;
+    }
+
+
+    printf("Case #%d: %d\n", testIndex, ans);
+}
 
 int main() {
+    int t;
+    cin >> t;
+    loop(I,t)  test(I+1);
+    return 0;
 }
+
+
+/*
+
+
+
+
+
+ */
+
+
+

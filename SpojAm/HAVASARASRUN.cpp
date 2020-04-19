@@ -58,13 +58,70 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 }
 
 
-const int N = 500 * 1000 + 5;
-
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+const int N = 1000 * 1000 + 5;
+
+int n;
+vc<ll> v;
 
 int main() {
+    scanf("%d",&n);
+
+    map<ll,ll> cnt;
+    loop(i,n){
+        ll e;
+        scanf("%lld",&e);
+        v.PB(e);
+        cnt[e]++;
+    }
+
+    sort(all(v));
+
+
+    ll ans = 0;
+    ll eq = 0;
+    for(auto p: cnt){
+        ll l2 = p.first;
+
+
+        ll lWays = (cnt[l2] * (cnt[l2]-1)) / 2;
+
+        eq += (cnt[l2]* (cnt[l2]-1) * (cnt[l2]-2)) / (1*2*3);
+
+        // base < 2*l2
+        ll baseCnt = lower_bound(all(v), 2*l2) - v.begin() - cnt[l2];
+
+//        cout << "\n\n" << endl;
+        db(l2);
+        db(eq);
+        db(lWays);
+        db(baseCnt);
+        ans += lWays*baseCnt;
+    }
+
+    db(ans);
+    db(eq);
+    cout << ans+eq << endl;
+
+    return 0;
 }
+
+
+/*
+......qQ
+.......b
+........
+........
+........
+........
+........
+........
+
+
+ */
+
+
+

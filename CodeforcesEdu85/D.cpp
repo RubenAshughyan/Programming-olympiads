@@ -60,11 +60,40 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 
 const int N = 500 * 1000 + 5;
 
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+
 
 int main() {
+    int t;
+    cin >> t;
+    loop(i, t) test();
+    return 0;
 }
+
+
+/*
+
+ 1
+ 3
+ 1 0
+ 1 0
+ 7 0
+
+ 1
+ 1
+ 5 0
+
+
+ 1
+ 3
+  7 2
+ 1 5
+ 5 7
+
+ */
+
+
+

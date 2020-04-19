@@ -60,11 +60,66 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 
 const int N = 500 * 1000 + 5;
 
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+void test() {
+
+    ll n;
+    cin >> n;
+    set<ll> divs;
+
+    for(ll i = 1; i*i <= n; i++){
+        if(n%i == 0){
+            divs.insert(i);
+            divs.insert(n/i);
+        }
+    }
+    divs.erase(n)
+            ;
+    vc<ll> d(all(divs));
+
+    sort(all(d));
+    reverse(all(d));
+
+
+    ll sum = 0;
+    bool ok = false;
+    for(ll x : d){
+        sum +=x;
+        if(sum == n){
+            ok = 1;
+        }
+    }
+    if(ok){
+        cout << "Semiperfect" << endl;
+    } else {
+        cout << "NOT Semiperfect" << endl;
+    }
+    // 1 2 3 6
+
+}
 
 int main() {
+
+    int t;
+    cin >> t;
+    loop(i,t) test();
+
+
+    return 0;
 }
+
+
+/*
+4
+3
+6
+32
+228
+
+ */
+
+
+

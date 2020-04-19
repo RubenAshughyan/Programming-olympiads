@@ -27,7 +27,7 @@
 #define ll long long
 #define ull unsigned long long
 #define vc vector
-#define SQ(j) (j)*(j)
+#define SQ(j) ((j)*(j))
 #define ch first
 #define range second
 //
@@ -58,13 +58,108 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 }
 
 
-const int N = 500 * 1000 + 5;
-
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+const int N = 200 * 1000 + 5;
+
+
+
+
+
+ll X[N], Y[N], Z[N];
+int xN, yN, zN;
+
+ll MX = 3*1e18+3;
+ll f1(int xi, int yi){
+
+    ll ans = MX;
+    loop(zi, zN){
+        ll x = X[xi];
+        ll y = Y[yi];
+        ll z = Z[zi];
+
+        ll cur = SQ(x-y) + SQ(y-z) + SQ(x-z);
+        ans = min(ans, cur);
+    }
+    return ans;
+}
+
+void test() {
+    cin >> xN >> yN >> zN;
+    loop(i, xN) cin >> X[i];
+    loop(i, yN) cin >> Y[i];
+    loop(i, zN) cin >> Z[i];
+
+    sort(X, X+xN);
+    sort(Y, Y+yN);
+    sort(Z, Z+zN);
+
+    ll ans = MX;
+    for (int xi = 0; xi < xN; xi++) {
+        db(xi);
+        int l = 0, r = yN - 1;
+        int A, B;
+        while (l + 5 < r) {
+            A = l + (r - l) / 3;
+            B = r - (r - l) / 3;
+            if(f1(xi,A) < f1(xi,B)){
+                r = B;
+            } else {
+                l = A;
+            }
+        }
+
+        int best_yi = l;
+        for(int i = l; i <= r; i++){
+            if(f1(xi, best_yi) > f1(xi,i)){
+                best_yi = i;
+            }
+        }
+
+
+        db(best_yi);
+        db(f1(xi, best_yi));
+        ans = min(ans, f1(xi, best_yi));
+        db(ans);
+
+    }
+
+    db(ans);
+    cout << ans << endl;
+}
 
 int main() {
+
+//    test();
+    int t;
+    cin >> t;
+    loop(i, t) test();
+
+
+    return 0;
 }
+
+
+/*
+2 2 3
+7 8
+6 3
+3 1 4
+
+
+
+ 8 8
+7 5
+1 7
+6 1
+3 7
+8 3
+2 1
+4 5
+
+ */
+
+
+

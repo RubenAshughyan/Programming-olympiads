@@ -60,11 +60,62 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 
 const int N = 500 * 1000 + 5;
 
-int DEBUG = 1;
+int DEBUG = 0;
 
 using namespace std;
 
-int n,h,m;
+int n;
+
+int solve(string s){
+    int ans = 0;
+
+    while(true){
+        vc<pair<char,int>> can;
+
+        loop(i,n){
+            if(i-1 >= 0 && s[i-1] == s[i]-1) can.PB({s[i],i});
+            else if(i+1 < n && s[i+1] == s[i]-1) can.PB({s[i],i});
+        }
+
+        if(can.empty()) break;
+
+        auto p = *max_element(all(can));
+        s.erase(s.begin() + p.second);
+
+        ans++;
+    }
+
+    return ans;
+
+}
 
 int main() {
+    cin >> n;
+
+    string s;
+    cin >> s;
+
+    int ans = solve(s);
+
+
+    cout << ans << endl;
+    return 0;
 }
+
+
+/*
+
+5
+3 7 9 7 8
+5 2 5 7 5
+
+ 5
+1 1 1 1 1
+1 1 1 1 1
+
+
+
+ */
+
+
+

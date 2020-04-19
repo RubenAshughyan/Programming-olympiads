@@ -64,7 +64,93 @@ int DEBUG = 1;
 
 using namespace std;
 
-int n,h,m;
+
+ll d,m;
+int I;
+
+vc<ll> memo(100,-1);
+
+ll solve(int i){
+//    db(i);
+    if(memo[i] != -1) return memo[i];
+
+    if(i == 0) return memo[i] = 1;
+    ll thisCnt;
+    if(i == I){
+        thisCnt = 1 + (d ^ (1ll << i));
+    } else {
+        thisCnt = (1ll << i);
+    }
+
+//    db(thisCnt);
+
+    thisCnt %= m;
+
+    ll ans = 0;
+
+    for(int ni = i-1; ni >= 0; ni--){
+        ans += thisCnt * solve(ni);
+        ans %= m;
+    }
+    ans += thisCnt;
+    ans %+ m;
+    return memo[i] = ans;
+}
+
+void test(){
+    loop(i,100) memo[i] = -1;
+
+    cin >> d >> m;
+
+
+    I = -1; // most sig bit
+    loop(i,60){
+        if((d >> i) & 1){
+            I = i;
+        }
+    }
+
+
+//    db(I);
+    ll ans = 0;
+    for(int i = 0; i <= I; i++){
+        ans += solve(i);
+        ans %= m;
+    }
+
+
+//    for(int i = 0; i <= I; i++){
+//        cout << i << ' ' << memo[i] << endl;
+//    }
+//
+//
+
+    cout << ans << endl;
+}
 
 int main() {
+    int t;
+    cin >> t;
+    loop(i,t) {
+        test();
+    }
+    return 0;
 }
+
+
+/*
+
+5
+3 7 9 7 8
+5 2 5 7 5
+
+ 5
+1 1 1 1 1
+1 1 1 1 1
+
+
+
+ */
+
+
+

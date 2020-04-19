@@ -58,13 +58,36 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 }
 
 
-const int N = 500 * 1000 + 5;
-
 int DEBUG = 1;
 
 using namespace std;
 
-int n,h,m;
-
+const int N = 1000 * 1000 + 5;
 int main() {
+
+    int n;
+    cin>>n;
+
+    vc<int> a(N, 0);
+    loop(i,n){
+        int t,d;
+        cin >> t >> d;
+        a[t]++;
+        a[t+d]++;
+        a[t+d+d]++;
+    }
+
+    int hand = *max_element(all(a));
+    int robots = (hand+1)/2;
+    cout << robots << endl;
+    return 0;
 }
+
+
+/*
+
+
+ */
+
+
+

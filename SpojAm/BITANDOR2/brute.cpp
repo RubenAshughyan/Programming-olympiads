@@ -58,13 +58,64 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 }
 
 
-const int N = 500 * 1000 + 5;
-
 int DEBUG = 1;
 
 using namespace std;
 
-int n,h,m;
+const int N = 1000 * 1000 + 5;
+
+int v[N];
+int n,k;
+
+int ans = 0;
+
+void gen(set<int> &st){
+    if(st.size() == k){
+        vc<int> blockORS;
+
+        for(int i: st){
+            int OR = v[i];
+            for(int j = (i+1)%n; !st.count(j); (j+=1)%= n){
+                OR |= v[j];
+            }
+            blockORS.PB(OR);
+        }
+
+        int AND = blockORS[0];
+        for(int e : blockORS) AND = AND&e;
+        ans = max(ans,AND);
+
+    } else {
+        loop(i,n){
+            if(st.empty() || i > *(--st.end())){
+                st.insert(i);
+                gen(st);
+                st.erase(i);
+            }
+        }
+    }
+}
 
 int main() {
+    cin >> n >> k;
+
+    loop(i,n){
+        cin >> v[i];
+    }
+
+    set<int> st;
+    gen(st);
+
+    cout << ans << endl;
+
+    return 0;
 }
+
+
+/*
+
+
+ */
+
+
+
