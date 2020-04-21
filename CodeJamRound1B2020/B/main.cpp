@@ -67,10 +67,11 @@ using namespace std;
 ll A,B;
 
 ll L = 1000*1000*1000;
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 ll rd() {
-    ll r1 = rand();
-    ll r2 = rand();
+    ll r1 = rng();
+    ll r2 = rng();
     ll r = (r1 << 32) ^ (r2);
     r = abs(r);
     return -L + r%(2*L+1);
@@ -94,7 +95,7 @@ string ask(ll x, ll y){
 
     string s;
     cin >> s;
-    if (s == "WRONG") exit(0);
+    if (s == "WRONG") assert(false);
 
     return s;
 }
