@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads CodeforcesEdu88/E/main.cpp)
+add_executable(Programming-olympiads Codeforces646Div2/F/main.cpp)
