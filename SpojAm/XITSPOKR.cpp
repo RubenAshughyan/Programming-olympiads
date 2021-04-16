@@ -36,8 +36,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define length first
+#define time second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +65,43 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 20 * 1000 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
-
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
-
-
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
-    }
-
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
-}
 
 int main() {
+
+    int n,x;
+    cin >> n >> x;
+
+    int input = 0;
+    loop(i,n){
+        int e;
+        cin >> e;
+
+        input |= (e << (n-i-1));
+    }
+
+    int ans = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = i; j < n; j++){
+            int num = 0;
+            for(int k = i; k <= j; k++){
+                num <<= 1;
+                num += ((input >> (n-k-1))&1);
+                if(num >= x) goto stex;
+            }
+            ans += num < x;
+        }
+        stex: cout << "";
+    }
+
+    cout << ans << endl;
+
 
     return 0;
 }
@@ -109,11 +110,6 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
 
 
  */

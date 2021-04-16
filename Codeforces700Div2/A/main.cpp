@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,43 +57,53 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 1000 * 1000 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
+void test() {
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+    ll P,H,n;
+    scanf("%lld%lld%lld",&P,&H,&n);
 
 
-    int ans = 0;
+    vc<ll> p(n);
+    vc<ll> h(n);
+    loop(i,n) scanf("%lld", &p[i]);
+    loop(i,n) scanf("%lld", &h[i]);
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    bool ok = true;
+    loop(i,n){
+
+        ll times = h[i]/P;
+        if(h[i]%P != 0) times++;
+
+
+        ll canTimes = H/p[i];
+        if(H%p[i] !=0) canTimes++;
+
+        if(times > canTimes){
+            ok = false;
+            break;
+        }
+
+        if(H < 0 && i != n-1) ok = false;
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
+    if(ok) cout << "YES\n";
+    else cout << "NO\n";
 
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
 
-    return memo[i][j][energy] = ans;
 }
 
 int main() {
 
+    int t;
+    cin >> t;
+    loop(i,t) test();
     return 0;
 }
 
@@ -109,11 +111,6 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
 
 
  */

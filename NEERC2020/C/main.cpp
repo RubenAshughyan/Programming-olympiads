@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +57,77 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
-int DEBUG = 0;
+
+const int N = 1000 * 1000 + 5;
+
+int DEBUG = 1;
 
 using namespace std;
 
-const int N = 100+30;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
+int n;
+vc<int> g[N];
 
-int memo[N][N][N];
+vc<int> col(22, 1);
 
-int solve(int i, int j, int energy){
+vc<int> comb(vc<int> a, vc<int> b){
+    for(int e: b){
+        a.PB(e);
+    }
+    return a;
+}
 
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+vc<int> f(int v){
 
+    db(v);
+    dbCont(g[v]);
 
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    if(g[v].empty()) {
+        db("empty");
+        vc<int> emp;
+        return emp;
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
+    int first_child = g[v][0];
+    if(g[v].size() == 1){
+        vc<int> ans;
+        ans.PB(first_child);
+        return comb(ans, f(first_child));
+    }
 
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
+    vc<int> res;
+    if(g[v].size() >= 2) {
+        g[v] = comb(g[first_child], g[v]);
+        g[v].erase(find(all(g[v]), first_child));
 
-    return memo[i][j][energy] = ans;
+        vc<int> cur = f(v);
+        res = comb(res, cur);
+        res.PB(g[v][0]);
+
+        reverse(all(cur));
+        res = comb(res, cur);
+        return comb(res,f(v));
+    }
+
 }
 
 int main() {
+    cin >> n;
+    loop(i,n-1){
+        int v;
+        cin >> v;
+        g[v-1].PB(i+1);
+    }
+
+
+
+    vc<int> res = f(0);
+
+    cout << res.size() << endl;
+    for(int e : res){
+        cout << e << ' ' ;
+    }
+    cout << endl;
 
     return 0;
 }
@@ -110,10 +137,22 @@ int main() {
 
 
  4
-2250 2250
-126 126
-1 6
-6 8
+1 1 1
+
+ 4
+1 2 3
+
+ 6
+1 1 2 2 2
+
+
+ 5
+1 2 1 1
+
+
+ 5
+1 1 2 3
+
 
 
  */

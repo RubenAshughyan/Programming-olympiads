@@ -70,38 +70,18 @@ int DEBUG = 0;
 using namespace std;
 
 const int N = 100+30;
-
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+const ll MOD = 1000*1000*1000+7;
 
 
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
-    }
-
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
-}
 
 int main() {
-
+    int t;
+    cin >> t;
+    loop(i,t){
+        ll n,k;
+        cin >> n >> k;
+        cout << (c2(n+2)*(k+1))%MOD << endl;
+    }
     return 0;
 }
 

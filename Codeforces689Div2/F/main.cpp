@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +57,83 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
-int DEBUG = 0;
+
+const int N = 1000 * 1000 + 5;
+
+int DEBUG = 1;
 
 using namespace std;
 
-const int N = 100+30;
+int n;
+vc<int> v;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
-
-
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+void doit(char c){
+    loop(i,n){
+        cout << v[i];
+        if(i!= n-1) cout << c;
     }
-
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
+    cout << endl;
 }
 
+
+bool eq(string a, string b){
+    sort(all(a));
+    sort(all(b));
+    return a == b;
+}
+
+
 int main() {
+    cin >> n;
+    v.resize(n);
+    loop(i,n) scanf("%d",&v[i]);
+
+    string s;
+    cin >> s;
+
+    if(s.length() == 1){
+        doit(s[0]);
+        return 0;
+    }
+
+    if(eq(s, "+-")){
+        doit('+');
+        return 0;
+    }
+
+    if(eq(s, "*-")){
+        doit('+');
+        return 0;
+    }
+
+    if(eq(s, "*+")){
+        cout << v[0];
+        for(int i = 1; i < n; i++){
+            int a = v[i-1];
+            int b = v[i];
+
+            char ch;
+
+            if(a == 0 || b == 0){
+                ch = '+';
+            }
+            else {
+                // none is 0
+
+                if(a == 1 || b == 1){
+                    ch = '+';
+                } else {
+                    ch = '*';
+                }
+            }
+            cout << ch <<v[i];
+
+        }
+        cout << endl;
+        return 0;
+    }
+
+
 
     return 0;
 }
@@ -108,12 +141,40 @@ int main() {
 
 /*
 
+ 1
+ 5 5
+1 2 3 4 5
+1
+8
+9
+12
+6
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+
+ 1
+ 5 5
+3 1 3 1 3
+1
+2
+3
+9
+11
+
+2
+5 5
+1 2 3 4 5
+1
+8
+9
+12
+6
+5 5
+3 1 3 1 3
+1
+2
+3
+9
+11
 
 
  */

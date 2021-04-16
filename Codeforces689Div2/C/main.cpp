@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,11 +28,11 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
-#define dbl  double
+#define dbl long double
 #define pll pair<long long,long long>
 #define pii pair<int,int>
 #define sz(xxx) ((int)(xxx.size()))
@@ -65,43 +57,57 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
-int DEBUG = 0;
+
+const int N = 1000 * 1000 + 5;
+
+int DEBUG = 1;
 
 using namespace std;
 
-const int N = 100+30;
+void test() {
+    int n,m;
+    cin >> n >> m;
+    vc<int> v(n);
+    loop(i,n) cin >> v[i];
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
-
-
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    vc<int> r(m);
+    vc<dbl> p(m);
+    loop(i,m) {
+        cin >> r[i] >> p[i];
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
 
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
+    int goodSuff = 0;
+    int need = n;
+    for(int i = n-1; i >= 0; i--){
+        if(v[i] == need){
+            goodSuff++;
+            need--;
+        } else {
+            break;
+        }
+    }
 
-    return memo[i][j][energy] = ans;
+    int bad = n-goodSuff;
+
+//    db(bad);
+    dbl ans = 1.0;
+    loop(i,m){
+        if(r[i] >= bad) ans *= (1.0-p[i]);
+    }
+//    cout << ans;
+    ans = 1.0-ans;
+
+    if(bad == 0) ans = 1.0;
+                         printf("%.10Lf\n", ans);
+
 }
 
 int main() {
 
+    int t;
+    cin >> t;
+    loop(i,t) test();
     return 0;
 }
 
@@ -109,11 +115,29 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+4
+4 3
+4 3 2 1
+1 0.3
+3 1
+4 0.6
+5 3
+4 2 1 3 5
+3 0.8
+4 0.6
+5 0.3
+6 5
+1 3 2 4 5 6
+4 0.9
+5 0.3
+2 0.4
+6 0.7
+3 0.5
+4 2
+1 2 3 4
+2 0.5
+4 0.1
+
 
 
  */

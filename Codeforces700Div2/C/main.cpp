@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,11 +28,11 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
-#define dbl  double
+#define dbl long double
 #define pll pair<long long,long long>
 #define pii pair<int,int>
 #define sz(xxx) ((int)(xxx.size()))
@@ -65,42 +57,64 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
-int DEBUG = 0;
+
+const int N = 1000 * 1000 + 5;
+
+int DEBUG = 1;
 
 using namespace std;
 
-const int N = 100+30;
+int n;
+map<int,int> mp;
+int f(int k){
+    if(k == 0) return 1e9;
+    if(k == n+1) return 1e9;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+//    return n+1-k;
 
 
-    int ans = 0;
+    if(mp.count(k)) return mp[k];
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
-    }
+    cout << "? " << k << endl;
+    fflush(stdout);
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
+    int ans;
+    cin >> ans;
+    return mp[k] = ans;
 }
-
+void say(int x){
+    cout << "! " << x << endl;
+    exit(0);
+}
 int main() {
+
+    cin >> n;
+
+    int l = 1, r = n;
+
+    while(l < r){
+        int a1 = l + (r-l)/3;
+        int a2 = r - (r-l)/3;
+
+        if(f(a1-1) > f(a1) && f(a1) < f(a1+1))
+            say(a1);
+        if(f(a2-1) > f(a2) && f(a2) < f(a2+1))
+            say(a2);
+
+        bool d1 = f(a1-1) > f(a1);
+        bool d2 = f(a2-1) > f(a2);
+
+        if(d1 && d2){
+            l = a2;
+        } else if(d1 && !d2){
+            l = a1;
+            r = a2;
+        } else if(!d1 && d2){
+            r = a1;
+        } else if(!d1 && !d2){
+            r = a1;
+        }
+    }
 
     return 0;
 }
@@ -109,13 +123,30 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+4
+4 3
+4 3 2 1
+1 0.3
+3 1
+4 0.6
+5 3
+4 2 1 3 5
+3 0.8
+4 0.6
+5 0.3
+6 5
+1 3 2 4 5 6
+4 0.9
+5 0.3
+2 0.4
+6 0.7
+3 0.5
+4 2
+1 2 3 4
+2 0.5
+4 0.1
 
-
+5 4 3 2 1
  */
 
 

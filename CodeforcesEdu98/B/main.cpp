@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,43 +57,53 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 500 * 1000 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
+void test() {
+    int n;
+    cin >> n;
 
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+    n *= 2;
 
 
-    int ans = 0;
+    vc<int> v(n);
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    vc<int> odds;
+    vc<int> evens;
+    loop(i, n) {
+        scanf("%d", &v[i]);
+        if (v[i] & 1) odds.PB(i+1);
+        else evens.PB(i+1);
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
 
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
+    int cnt = 0;
+    for(int i = 0; i+1 < odds.size(); i+=2){
+        if(cnt == n/2-1) break;
+        cout << odds[i] << ' ' << odds[i+1] << endl;
+        cnt++;
+        if(cnt == n/2-1) break;
+    }
 
-    return memo[i][j][energy] = ans;
+    for(int i = 0; i+1 < evens.size(); i+=2){
+        if(cnt == n/2-1) break;
+        cout << evens[i] << ' ' << evens[i+1] << endl;
+        cnt++;
+        if(cnt == n/2-1) break;
+    }
+//    cout << "--------\n";
 }
 
 int main() {
-
+    int t;
+    cin >> t;
+    loop(i, t) test();
     return 0;
 }
 
@@ -109,11 +111,6 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
 
 
  */

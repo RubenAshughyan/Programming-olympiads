@@ -2,9 +2,9 @@
 //#pragma GCC optimize "-O2"
 //#pragma GCC optimize "-O3"
 
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
+//#pragma GCC target ("avx2")
+//#pragma GCC optimization ("O3")
+//#pragma GCC optimization ("unroll-loops")
 
 #include <iostream>
 #include <cstdio>
@@ -36,8 +36,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+//#define length first
+//#define time second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +65,35 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 300 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
-
-
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
-    }
-
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
-}
 
 int main() {
+    int n,m;
+    cin >> n >> m;
+
+    string sn = to_string(n);
+
+    for(int i = 0; i < sn.length(); i++){
+        for(int j = i+1; j+1 < sn.length();  j++){
+            string A = sn.substr(0,i+1);
+            string B = sn.substr(i+1,(j-i));
+            string C = sn.substr(j+1);
+
+
+            if(stoi(A) + stoi(B) + stoi(C) == m){
+                cout << A << '+' << B << '+' << C << endl;
+            }
+        }
+    }
+
+
 
     return 0;
 }
@@ -108,12 +101,10 @@ int main() {
 
 /*
 
+12479 68
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+8845 97
+
 
 
  */

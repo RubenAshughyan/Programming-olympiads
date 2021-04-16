@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +57,63 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 1000 * 1000 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+int A,B;
 
 
-    int ans = 0;
+vc<int> val(N,-1);
+vc<int> l(N,0);
+vc<int> r(N,0);
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+int GI = 1;
+
+void vata(){
+    cout << -1 << endl;
+    exit(0);
+}
+
+int f(int a, int b){
+
+    // No child if sum is 0
+    if(a == 0 && b == 0) return 0;
+
+    int v = GI++;
+
+    //try put 2
+    if(b%2==1){
+        val[v] = 2;
+        b--;
+    } else if(a>0){
+        val[v] = 1;
+        a--;
+    } else {
+        val[v] = 2;
+        b--;
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
 
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
+    if(a == 0 && b > 0 && b % 2 == 1) vata();
 
-    return memo[i][j][energy] = ans;
+    l[v] = f(a-a/2, b/2);
+    r[v] = f(a/2, b-b/2);
+    return v;
 }
 
 int main() {
+    cin >> A >> B;
+
+    f(A,B);
+
+    for(int i = 1; i < GI; i++){
+        cout << val[i] << ' ' << l[i] << ' ' << r[i] << endl;
+    }
 
     return 0;
 }
@@ -109,11 +122,37 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+    // if only ones 1,1,1
+    if(b == 0){
+
+        l[v] = f(a/2,0);
+        r[v] = f(a-a/2,0);
+        return v;
+    }
+
+    // if only twos 2,2,2
+    if(a == 0){
+        if(b%2 == 0){
+            vata();
+        }
+
+        l[v] = f(0,b/2);
+        r[v] = f(0,b/2);
+        return v;
+    }
+
+
+    int left2 = b/2;
+    int right2 = b-b/2;
+
+    int left1 = a/2;
+    int right1 = a-a/2;
+    // lava
+    if(b%2 == 0){
+        l[v] = f(left1,left2);
+        r[v] = f(left2, right2);
+        return v;
+    }
 
 
  */

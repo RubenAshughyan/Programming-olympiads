@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +57,36 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 1000 * 1000 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
+int main() {
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
+    int count = 0;
 
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
-
-
-    int ans = 0;
-
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    for (int a1 = 0; a1 <= 2; a1++){
+        for (int a2 = 0; a2 <= 2; a2++){
+            for (int a3 = 0; a3 <= 2; a3++){
+                if(a1+a2+a3 <= 6) {
+                    cout << a1 << a2 << a3 << endl;
+                }
+//                for (int a4 = 0; a4 <= 3; a4++){
+//                    for (int a5 = 0; a5 <= 3; a5++){
+//                        if(a1 + a2 + a3 == a4 + a5){
+//                            cout << a1 << a2 << a3 << a4 << a5 << endl;
+//                            count++;
+//                        }
+//                    }
+//                }
+            }
+        }
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
-}
-
-int main() {
+//    cout << count << endl;
 
     return 0;
 }
@@ -109,12 +95,21 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+a - 1 0 0 1 0
 
+b - 1 0 0
+
+c - 2 0 0 1 1
+d - 2 1 0 1 2
+e - 1 1 0 1 1
+f - 2 1 0 2 1
+
+
+o - 1 1 1 2 1
+
+
+r - 1 2 1 3 1
+z - 1 1 2 2 2
 
  */
 

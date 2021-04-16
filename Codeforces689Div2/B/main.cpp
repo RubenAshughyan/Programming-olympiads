@@ -58,93 +58,88 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
 }
 
 
-const int N = 500 * 1000 + 5;
+const int N = 1000 * 1000 + 5;
 
-int DEBUG = 0;
+int DEBUG = 1;
 
 using namespace std;
 
-int n,a,r,m;
+int n,m;
 
-vc<ll> h;
+bool ins(int i, int j) {
+    return
+            0 <= i && i < n &&
+            0 <= j && j < m;
+}
 
-ll f(ll H){
-    if(H >= h.back()) {
-        ll sum = 0;
-        loop(i,n){
-            sum += H-h[i];
-        }
-        return sum*a;
-    }
 
-    // hatuma
+void test() {
+    cin >> n >> m;
+    vc<string> v(n);
+    loop(i,n) cin >> v[i];
 
-    ll verev = 0;
-    ll nerqevArat = 0;
-
+    vc<vc<int>> ps;
     loop(i,n){
-        if(h[i] < H){
-            nerqevArat += H-h[i];
-        } else if(h[i] > H){
-            verev += h[i]-H;
+        vc<int> p(m);
+        for(int j =0 ; j < m; j++){
+            p[j] = (j-1>=0 ? p[j-1]:0) + (v[i][j] == '*');
+        }
+        ps.PB(p);
+    }
+
+    int ans = 0;
+    loop(I,n){
+        loop(J,m){
+            if(v[I][J] == '*'){
+                ans++;
+
+                int d = 1;
+                int i = I+1;
+                while(i < n){
+                    // check next row
+                    bool ok = true;
+                    if(!ins(i, J-d) || !ins(i, J+d)){
+                        ok = false;
+                    }
+
+                    if(!ok) break;
+
+
+                    int sum = ps[i][J+d] - ((J-d-1 >= 0) ? ps[i][J-d-1] : 0);
+//                    dbCont(ps[i]);
+//                    db(sum);
+                    if(sum != (J+d - (J-d)+1)) ok = false;
+//                    for(int k = J-d; k <= J+d; k++) {
+//                        if(v[i][k] != '*') ok = false;
+//                    }
+
+                    if(ok){
+                        ans++;
+                        i++;
+                        d++;
+                    }
+                    else break;
+                }
+            }
+
         }
     }
-
-    ll moveCount = min(verev, nerqevArat);
-    verev -= moveCount;
-    nerqevArat -= moveCount;
-
-    ll ans = moveCount * m;
-
-    if(verev > 0){
-        ans += verev*r;
-    }
-    if(nerqevArat > 0){
-        ans += nerqevArat*a;
-    }
-    return ans;
+    cout << ans << endl;
 }
 
 int main() {
-    scanf("%d%d%d%d",&n,&a,&r,&m);
-
-    m = min(m, a+r);
-
-    h.resize(n);
-    loop(i,n){
-        scanf("%lld",&h[i]);
-    }
-    sort(all(h));
-
-
-    ll l = 0, r = 1e9+2;
-    while(l+5 < r){
-        ll A1 = l + (r-l)/3;
-        ll A2 = r - (r-l)/3;
-
-        if(f(A1) < f(A2)) {
-            r = A2;
-        } else {
-            l = A1;
-        }
-    }
-
-    ll ans = l;
-    for(ll i = l; i <= r; i++){
-        if(f(ans) > f(i)){
-            ans = i;
-        }
-    }
-
-    cout << f(ans) << endl;
-
-
+    int t;
+    cin >> t;
+    loop(i,t) test();
 
     return 0;
 }
 
 
 /*
+
+
+
 
  */
 

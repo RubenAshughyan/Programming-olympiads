@@ -36,8 +36,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define length first
+#define time second
 //
 //#define ld long double
 #define dbl  double
@@ -65,42 +65,83 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
+const int N = 20 * 1000 + 5;
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
+vc<pii > g[4];
 
-int memo[N][N][N];
+int a = 0;
+int b = 1;
+int c = 2;
+int d = 3;
+vc<int> globV(4);
 
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+void tryFrom(int v) {
+    auto A = globV;
 
 
-    int ans = 0;
+    vc<int> res;
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    res.PB((v >> 1) & 1);
+    res.PB((v >> 0) & 1);
+
+    db(v);
+
+    while (A[0] + A[1] + A[2] + A[3] > 0) {
+//        cout << endl;
+        dbCont(A);
+        db(v);
+
+        int whichCanInc = -1;
+        int to;
+        for(auto p: g[v]){
+            if(A[p.first] > 0 && (whichCanInc == -1 || A[whichCanInc] < A[p.first])){
+                whichCanInc = p.first;
+                to = p.second;
+                break;
+            }
+        }
+
+        db(whichCanInc);
+        if(whichCanInc == -1) return;
+
+        res.PB(to&1);
+        A[whichCanInc]--;
+        v = to;
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
+    for(int e: res){
+        cout << e;
+    }
+    cout << endl;
+    exit(0);
 }
 
 int main() {
+
+    // graph
+    g[0b00] = {{a, 0b00},{b, 0b01}};
+    g[0b01] = {{b, 0b10},{c, 0b11}};
+    g[0b10] = {{b, 0b00},{c, 0b01}};
+    g[0b11] = {{d, 0b11},{c, 0b10}};
+
+
+    loop(i, 4) cin >> globV[i];
+
+    dbCont(globV);
+
+    tryFrom(0);
+    tryFrom(1);
+    tryFrom(2);
+    tryFrom(3);
+
+    cout << "IMPOSSIBLE" << endl;
+
 
     return 0;
 }
@@ -109,11 +150,10 @@ int main() {
 /*
 
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+4 2
+1 2 7 2
+2 4 4 6
+2 3 4 3
 
 
  */

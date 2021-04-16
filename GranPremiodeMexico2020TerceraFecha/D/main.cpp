@@ -69,39 +69,56 @@ int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
-
-//2:27
-int T,P;
-int E[N],D[N],S[N];
-
-int memo[N][N][N];
-
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+const int N = 100 + 30;
+const ll MOD = 1000 * 1000 * 1000 + 7;
 
 
-    int ans = 0;
+void test() {
+    string s;
+    cin >> s;
+    int k;
+    cin >> k;
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    int i = 0;
+    string ans;
+    while (i < s.length()) {
+        // single char
+        if (isalpha(s[i])) {
+            ans.PB(s[i]);
+            i++;
+        } else {
+            // scan number
+            string numString = "";
+            while (i < s.length() && '0' <= s[i] && s[i] <= '9') {
+                numString.PB(s[i]);
+                i++;
+            }
+
+            if (numString.length() >= 8) {
+                cout << "unfeasible" << endl;
+                return;
+            }
+
+            char c = s[i++];
+
+            int cnt = stoi(numString);
+            loop(xxx,cnt) ans.PB(c);
+        }
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
+    if(ans.length() > k){
+        cout << "unfeasible" << endl;
+    } else {
+        cout << ans << endl;
+    }
 }
 
 int main() {
-
+    int t;
+    cin >> t;
+    loop(i, t) {
+        test();
+    }
     return 0;
 }
 

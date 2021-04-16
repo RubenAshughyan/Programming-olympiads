@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,55 +57,127 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
-int DEBUG = 0;
+
+const int N = 1000 * 1000 + 5;
+
+int DEBUG = 1;
 
 using namespace std;
 
-const int N = 100+30;
+int n,q;
+vc<ll> a;
+vc<ll> ps;
+set<ll> ans;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
+void f(int l, int r){
+    if(DEBUG){
+        cout << endl;
+        cout << l << ' ' <<r <<endl;
+    }
+    ll sum = ps[r] - ((l-1) >= 0 ? ps[l-1] : 0);
+    db(sum);
+    ans.insert(sum);
 
-int memo[N][N][N];
+    if(l == r)
+        return;
 
-int solve(int i, int j, int energy){
+    ll mx = a[r];
+    ll mn = a[l];
 
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
+    dbl midd = (0.0 + mx + mn) / 2.0;
+
+    ll mid = floor(midd+0.0000001);
+    db(mid);
+
+    auto it = upper_bound(a.begin()+l, a.begin()+r+1, mid);
+    int m = (it-a.begin());
+    db(m);
+    if(m != l && m != r+1){
+        f(l,m-1);
+        f(m,r);
+    }
+}
+
+void test() {
+    cin >> n >> q;
+    a.resize(n);
+    ans.clear();
+    loop(i,n){
+        scanf("%lld", &a[i]);
+    }
+    sort(all(a));
 
 
-    int ans = 0;
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+
+    ps = a;
+    for(int i = 1; i < n; i++){
+        ps[i] += ps[i-1];
     }
 
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
 
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
+    f(0,n-1);
 
-    return memo[i][j][energy] = ans;
+
+
+    dbCont(ans);
+    loop(i,q){
+        ll e;
+        scanf("%lld",&e);
+        if(ans.count(e)){
+            printf("Yes\n");
+        } else {
+            printf("No\n");
+
+        }
+    }
 }
 
 int main() {
 
+    int t;
+    cin >> t;
+    loop(i,t) test();
     return 0;
 }
 
 
 /*
 
+ 1
+ 5 5
+1 2 3 4 5
+1
+8
+9
+12
+6
 
- 4
-2250 2250
-126 126
-1 6
-6 8
+
+ 1
+ 5 5
+3 1 3 1 3
+1
+2
+3
+9
+11
+
+2
+5 5
+1 2 3 4 5
+1
+8
+9
+12
+6
+5 5
+3 1 3 1 3
+1
+2
+3
+9
+11
 
 
  */

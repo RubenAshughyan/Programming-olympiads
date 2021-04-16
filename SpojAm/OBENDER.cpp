@@ -1,11 +1,3 @@
-//#pragma GCC optimize "-O1"
-//#pragma GCC optimize "-O2"
-//#pragma GCC optimize "-O3"
-
-#pragma GCC target ("avx2")
-#pragma GCC optimization ("O3")
-#pragma GCC optimization ("unroll-loops")
-
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +28,8 @@
 #define ull unsigned long long
 #define vc vector
 #define SQ(j) (j)*(j)
-//#define v first
-//#define y second
+#define ch first
+#define range second
 //
 //#define ld long double
 #define dbl  double
@@ -65,56 +57,99 @@ ostream &operator<<(ostream &out, pair<K, V> &elem) {
     return out;
 }
 
+
 int DEBUG = 0;
 
 using namespace std;
 
-const int N = 100+30;
+const int N = 1000 * 1000 + 5;
 
-//2:27
-int T,P;
-int E[N],D[N],S[N];
+bool ins(int i, int j) {
+    return
+            0 <= i && i < 8 &&
+            0 <= j && j < 8;
+}
 
-int memo[N][N][N];
+int howManyAttack(vc<string> v) {
 
-int solve(int i, int j, int energy){
-
-    if(i == T) return 0;
-    if(j == P) return 0;
-    if(memo[i][j][energy] != -1) return memo[i][j][energy];
 
 
     int ans = 0;
 
-    //solve that
-    if(energy >= D[j]) {
-        ans = max(ans, S[j] + solve(i, j+1, energy-D[j]));
+    int I = -1;
+    int J = -1;
+    loop(i, 8) loop(j, 8) if (v[i][j] == 'Q') {
+                I = i;
+                J = j;
+            }
+
+
+
+    if (I == -1) return -1;
+
+    db(I);
+    db(J);
+
+    for (int di = -1; di <= +1; di++) {
+        for (int dj = -1; dj <= +1; dj++) {
+            if (di == 0 && dj == 0) continue;
+
+            int cI = I + di;
+            int cJ = J + dj;
+            while (ins(cI, cJ)) {
+
+                if (v[cI][cJ] == 'b' ) ans++;
+                if (v[cI][cJ] != '.') break;
+
+                cI += di;
+                cJ += dj;
+            }
+
+        }
     }
-
-    // move to next
-    ans = max(ans, solve(i,j+1, energy));
-
-    // radeli
-    ans = max(ans, solve(i+1, j, E[i+1]));
-
-    return memo[i][j][energy] = ans;
+    db(ans);
+    return ans;
 }
 
+
 int main() {
+
+    vc<string> v;
+    loop(i, 8) {
+        string s;
+        cin >> s;
+        v.PB(s);
+    }
+
+
+    int ans = 0;
+    loop(i,8){
+        loop(j,8){
+            if(v[i][j] == '.'){
+                v[i][j] = 'Q';
+                if(howManyAttack(v) == 0){
+                    ans++;
+                }
+                v[i][j] = '.';
+            }
+        }
+    }
+
+    cout << ans << endl;
 
     return 0;
 }
 
 
 /*
-
-
- 4
-2250 2250
-126 126
-1 6
-6 8
-
+...b....
+..bb.b..
+........
+...b....
+...w....
+........
+.ww.....
+....w...
 
  */
 
