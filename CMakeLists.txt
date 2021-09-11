@@ -3,4 +3,4 @@ project(Programming-olympiads)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Programming-olympiads CodeJamRound12021/C/main.cpp)
+add_executable(Programming-olympiads FacebookHackerCup2021QR/B/main.cpp)
